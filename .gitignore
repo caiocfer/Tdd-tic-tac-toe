@@ -1,0 +1,19 @@
+# Tox environment
+.tox/
+.venv/
+venv/
+
+# Python compiled files
+*.pyc
+*.pyo
+__pycache__/
+
+# Test and coverage reports
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Logs and build output
+logs/
+build/
+dist/
