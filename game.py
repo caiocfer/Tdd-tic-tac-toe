@@ -14,10 +14,12 @@ class Game:
         return self.player1, self.player2
     
     def player1_play(self, row, column):
-        self.field[row][column] = "X"
+        if self.check_empty_field(row, column):
+            self.field[row][column] = "X"
 
     def player2_play(self, row, column):
-        self.field[row][column] = "O"
+        if self.check_empty_field(row, column):
+            self.field[row][column] = "O"
     
     def check_empty_field(self,row, column):
         print("Row: ", row)

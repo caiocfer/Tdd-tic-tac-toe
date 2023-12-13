@@ -66,6 +66,50 @@ class TestGame(unittest.TestCase):
 
         self.assertEqual(self.field, expected_field)
     
+    def test_player1_cant_play(self):
+        game_instance = Game()
+
+        expected_field = [
+            ['O', ' ', ' '],
+            [' ', ' ', ' '],
+            [' ', ' ', ' ']
+        ]
+
+
+        field = [
+            ['O', ' ', ' '],
+            [' ', ' ', ' '],
+            [' ', ' ', ' ']
+        ]
+
+        game_instance.field = field
+
+        game_instance.player1_play(0, 0)
+
+        self.assertEqual(expected_field, game_instance.field)
+        
+    def test_player2_cant_play(self):
+        game_instance = Game()
+
+        expected_field = [
+            ['X', ' ', ' '],
+            [' ', ' ', ' '],
+            [' ', ' ', ' ']
+        ]
+
+
+        field = [
+            ['X', ' ', ' '],
+            [' ', ' ', ' '],
+            [' ', ' ', ' ']
+        ]
+
+        game_instance.field = field
+
+        game_instance.player2_play(0, 0)
+
+        self.assertEqual(expected_field, game_instance.field)
+    
     def test_player2_play(self):
         game_instance = Game()
 
