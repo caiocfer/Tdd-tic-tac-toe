@@ -1,4 +1,6 @@
 from game import Game
+
+from unittest import mock
 import unittest
 
 class TestGame(unittest.TestCase):
@@ -28,7 +30,7 @@ class TestGame(unittest.TestCase):
         game_instance = Game()
 
         #Start empty field
-        self.field = game_instance.initialize_field()
+        game_instance.start_game()
 
         column = 1
         row = 1
@@ -40,7 +42,7 @@ class TestGame(unittest.TestCase):
             [' ', ' ', ' ']
         ]
 
-        self.assertEqual(self.field, expected_field)
+        self.assertEqual(game_instance.field, expected_field)
 
         expected_field = [
             [' ', ' ', ' '],
@@ -66,55 +68,11 @@ class TestGame(unittest.TestCase):
 
         self.assertEqual(self.field, expected_field)
     
-    def test_player1_cant_play(self):
-        game_instance = Game()
-
-        expected_field = [
-            ['O', ' ', ' '],
-            [' ', ' ', ' '],
-            [' ', ' ', ' ']
-        ]
-
-
-        field = [
-            ['O', ' ', ' '],
-            [' ', ' ', ' '],
-            [' ', ' ', ' ']
-        ]
-
-        game_instance.field = field
-
-        game_instance.player1_play(0, 0)
-
-        self.assertEqual(expected_field, game_instance.field)
-        
-    def test_player2_cant_play(self):
-        game_instance = Game()
-
-        expected_field = [
-            ['X', ' ', ' '],
-            [' ', ' ', ' '],
-            [' ', ' ', ' ']
-        ]
-
-
-        field = [
-            ['X', ' ', ' '],
-            [' ', ' ', ' '],
-            [' ', ' ', ' ']
-        ]
-
-        game_instance.field = field
-
-        game_instance.player2_play(0, 0)
-
-        self.assertEqual(expected_field, game_instance.field)
-    
     def test_player2_play(self):
         game_instance = Game()
 
         #Initialize empty field
-        self.field = game_instance.initialize_field()
+        game_instance.start_game()
         player1_column = 0
         player1_row = 2
         game_instance.player1_play(player1_row, player1_column)
@@ -130,13 +88,13 @@ class TestGame(unittest.TestCase):
             ['X', ' ', ' ']
         ]
 
-        self.assertEqual(self.field, expected_field)
+        self.assertEqual(game_instance.field, expected_field)
     
     def test_check_empty_field(self):
         game_instance = Game()
 
         #Initialize empty field
-        self.field = game_instance.initialize_field()
+        self.field = game_instance.start_game()
 
         #Populate field
         game_instance.player1_play(2,0)
@@ -148,15 +106,6 @@ class TestGame(unittest.TestCase):
 
         expected_empty = game_instance.check_empty_field(0,0)
         self.assertTrue(expected_empty)
-
-
-    def test_start_game(self):
-        game_instance = Game()
-        field = game_instance.start_game()
-        
-        #Assert field is empty on start
-        self.assertEqual(field, game_instance.initialize_field())
-
 
     def test_check_winning_conditions(self):
         game_instace = Game()
@@ -213,3 +162,81 @@ class TestGame(unittest.TestCase):
         game_instace.field =  expected_field_not_win
         not_winning_condition = game_instace.check_winning_conditions()
         self.assertFalse(not_winning_condition)
+
+
+    def test_start_game(self):
+        game_instance = Game()
+        game_instance.start_game()        
+        self.assertEqual(game_instance.field, game_instance.initialize_field())       
+
+    def test_player1_turn_empty_field(self):
+        with mock.patch('builtins.input', side_effect=['2', '2']):
+            game_instance = Game()
+
+            game_instance.initialize_field()
+            game_instance.instatiate_players()
+            game_instance.player1_turn()
+
+    def test_player1_turn_filled_field(self):
+        with mock.patch('builtins.input', side_effect=['2', '2','1','0']):
+            game_instance = Game()
+
+            game_instance.initialize_field()
+            
+            game_instance.field = [
+            [' ', ' ', ' '],
+            [' ', 'O', ' '],
+            ['X', ' ', 'X']]
+
+            game_instance.instatiate_players()
+            game_instance.player1_turn()
+
+    def test_play_game_player1_wins(self):
+        with mock.patch('builtins.input', side_effect=[
+                                        '0', '0',
+                                        '1', '2',
+                                        '1', '1',
+                                        '0', '1',
+                                        '2', '2'
+
+                                        ]):
+            game_instance = Game()
+
+            game_instance.play_game()
+
+        self.assertEqual(game_instance.player1, game_instance.winning_player)
+
+        
+
+    def test_play_game_player2_wins(self):
+        game_instance = Game()
+
+        
+        game_instance.instatiate_players()
+        game_instance.start_game()
+
+        player2 = game_instance.player2
+
+        game_instance.player1_play(1,2)
+        game_instance.player2_play(0,0)
+
+        game_instance.player1_play(0,1)
+        game_instance.player2_play(1,1)
+
+        game_instance.player1_play(0,2)
+        game_instance.player2_play(2,2)
+        with mock.patch('builtins.input', side_effect=[
+                                        '1', '2',
+                                        '0', '0',
+                                        '0', '1',
+                                        '1', '1',
+                                        '0',  '2',
+                                        '2',  '2'
+                                        ]):
+            game_instance = Game()
+
+            game_instance.play_game()
+
+        self.assertEqual(game_instance.player2, game_instance.winning_player)
+
+        
